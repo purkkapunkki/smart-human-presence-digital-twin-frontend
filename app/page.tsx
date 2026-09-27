@@ -5,11 +5,14 @@ export default function Home() {
         <div className="shadow-lg w-fit mx-auto p-5 rounded-[var(--rounded-corners)]">
           <form action="" method="get" className="flex flex-col gap-0.5">
             <section className=" flex flex-col mb-2">
-              <label htmlFor="username">Username</label>
+              <label htmlFor="username">
+                Username <span className="text-red-500 text-">*</span>
+              </label>
               <input
                 type="text"
                 id="username"
                 name="username"
+                required
                 className=" border border-gray-300 rounded-[var(--rounded-corners)] p-2"
               />
             </section>
