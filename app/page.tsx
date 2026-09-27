@@ -26,7 +26,7 @@ export default function Home() {
               type="submit"
               className="bg-blue-500 text-white p-2 rounded-[var(--rounded-corners)] hover:bg-blue-600 transition-colors cursor-pointer"
             >
-              Sign in
+              Log in
             </button>
           </form>
         </div>
