@@ -10,16 +10,13 @@ export default function Home() {
             name="username"
             className=" border border-gray-300 rounded-[var(--rounded-corners)] p-2"
           />
-          <label htmlFor="dropdown">Avatar color</label>
-          <select
-            name="dropdown"
-            id="dropdown"
+          <label htmlFor="avatar-color">Avatar color</label>
+          <input
+            type="color"
+            id="avatar-color"
+            name="avatar-color"
             className="border border-gray-300 rounded-[var(--rounded-corners)] p-2 cursor-pointer"
-          >
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-          </select>
+          />
           <button
             type="submit"
             className="bg-blue-500 text-white p-2 rounded-[var(--rounded-corners)] hover:bg-blue-600 transition-colors cursor-pointer"
