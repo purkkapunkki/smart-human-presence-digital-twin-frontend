@@ -5,32 +5,25 @@ import {
   useContext,
   useEffect,
   useState,
+  type Dispatch,
   type ReactNode,
+  type SetStateAction,
 } from "react";
 import { io, type Socket } from "socket.io-client";
+import { BACKEND_URL } from "./backend-url";
+import type { CurrentUser } from "./backend-contracts";
 
-export type CurrentUser = {
-  username: string;
-  avatarColor: string;
-  location: {
-    x: number;
-    y: number;
-  };
-};
-
-const BACKEND_HOST = process.env.BACKEND_HOST ?? "localhost";
-const BACKEND_PORT = process.env.BACKEND_PORT ?? "3001";
-const SOCKET_URL = `http://${BACKEND_HOST}:${BACKEND_PORT}`;
+export type { CurrentUser } from "./backend-contracts";
 
 const SocketContext = createContext<Socket | null>(null);
 const UserContext = createContext<{
   currentUser: CurrentUser | null;
-  setCurrentUser: (user: CurrentUser | null) => void;
+  setCurrentUser: Dispatch<SetStateAction<CurrentUser | null>>;
 } | null>(null);
 
 export function SocketProvider({ children }: { children: ReactNode }) {
   const [socket] = useState<Socket>(() =>
-    io(SOCKET_URL, {
+    io(BACKEND_URL, {
       autoConnect: true,
       reconnection: true,
       reconnectionAttempts: Infinity,
