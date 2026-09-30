@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import type { BackendMap, BackendState } from "../backend-contracts";
 import { BACKEND_URL } from "../backend-url";
 import { useCurrentUser, useSocket } from "../SocketProvider";
+import TemporaryMovementForm from "./TemporaryMovementForm";
 
 export default function MapPage() {
   const router = useRouter();
@@ -161,6 +162,8 @@ export default function MapPage() {
             Position: {currentUser.location.x}, {currentUser.location.y}
           </p>
         </section>
+
+        <TemporaryMovementForm />
 
         <section
           className="rounded-(--rounded-corners) border border-gray-300 p-4"
