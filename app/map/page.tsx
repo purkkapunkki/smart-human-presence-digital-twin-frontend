@@ -6,6 +6,7 @@ import type { BackendMap, BackendState } from "../backend-contracts";
 import { BACKEND_URL } from "../backend-url";
 import { useCurrentUser, useSocket } from "../SocketProvider";
 import TemporaryMovementForm from "./TemporaryMovementForm";
+import TemporarySensorForm from "./TemporarySensorForm";
 
 export default function MapPage() {
   const router = useRouter();
@@ -164,6 +165,7 @@ export default function MapPage() {
         </section>
 
         <TemporaryMovementForm />
+        <TemporarySensorForm />
 
         <section
           className="rounded-(--rounded-corners) border border-gray-300 p-4"

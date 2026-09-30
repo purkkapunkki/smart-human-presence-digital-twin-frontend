@@ -9,17 +9,21 @@ export type CurrentUser = {
   location: UserLocation;
 };
 
-export type AnonymousPresence = {
+export type MovementEvent = {
+  x: number;
+  y: number;
+  confidence: number;
+};
+
+export type SensorUpdate = {
   timestamp: string;
   zone_id: string;
   occupancy_count: number;
-  movement_events: Array<{
-    x: number;
-    y: number;
-    confidence: number;
-  }>;
+  movement_events: MovementEvent[];
   confidence: number;
 };
+
+export type AnonymousPresence = SensorUpdate;
 
 export type BackendState = {
   loggedInUsers: CurrentUser[];
