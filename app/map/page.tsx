@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import type { BackendMap, BackendState } from "../backend-contracts";
 import { BACKEND_URL } from "../backend-url";
 import { useCurrentUser, useSocket } from "../SocketProvider";
+import MapVisualization from "./MapVisualization";
 import TemporaryMovementForm from "./TemporaryMovementForm";
 import TemporarySensorForm from "./TemporarySensorForm";
 
@@ -153,6 +154,26 @@ export default function MapPage() {
           </button>
         </div>
 
+        <section className="rounded-(--rounded-corners) border border-gray-300 bg-white p-4">
+          <h2 className="mb-3 text-lg font-medium">
+            {mapData?.name ?? "Floor plan"}
+          </h2>
+          {mapError ? (
+            <p className="text-sm text-red-600" role="alert">
+              {mapError}
+            </p>
+          ) : isLoadingMap ? (
+            <p className="text-sm text-gray-500" role="status">
+              Loading map data...
+            </p>
+          ) : mapData ? (
+            <MapVisualization
+              map={mapData}
+              users={backendState?.loggedInUsers ?? [currentUser]}
+            />
+          ) : null}
+        </section>
+
         <section className="rounded-(--rounded-corners) border border-gray-300 p-4">
           <h2 className="text-lg font-medium">Current user</h2>
           <p>{currentUser.username}</p>
@@ -217,23 +238,6 @@ export default function MapPage() {
             <p className="mt-2 text-sm text-gray-500" role="status">
               Waiting for the first state update...
             </p>
-          )}
-        </section>
-
-        <section className="rounded-(--rounded-corners) border border-gray-300 p-4">
-          <h2 className="text-lg font-medium">Map data</h2>
-          {mapError ? (
-            <p className="mt-2 text-sm text-red-600" role="alert">
-              {mapError}
-            </p>
-          ) : isLoadingMap ? (
-            <p className="mt-2 text-sm text-gray-500" role="status">
-              Loading map data...
-            </p>
-          ) : (
-            <pre className="mt-3 max-h-96 overflow-auto rounded bg-gray-50 p-3 text-xs">
-              {JSON.stringify(mapData, null, 2)}
-            </pre>
           )}
         </section>
       </div>
