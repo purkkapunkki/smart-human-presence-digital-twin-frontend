@@ -170,6 +170,7 @@ export default function MapPage() {
             <MapVisualization
               map={mapData}
               users={backendState?.loggedInUsers ?? [currentUser]}
+              presences={backendState?.anonymousPresences}
             />
           ) : null}
         </section>

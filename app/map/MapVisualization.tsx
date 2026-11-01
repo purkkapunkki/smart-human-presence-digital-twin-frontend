@@ -1,8 +1,13 @@
-import type { BackendMap, CurrentUser } from "../backend-contracts";
+import type {
+  AnonymousPresence,
+  BackendMap,
+  CurrentUser,
+} from "../backend-contracts";
 
 type MapVisualizationProps = {
   map: BackendMap;
   users: CurrentUser[];
+  presences?: AnonymousPresence[];
 };
 
 function getZoneCenter(polygon: [number, number][]) {
@@ -20,7 +25,16 @@ function getZoneCenter(polygon: [number, number][]) {
 export default function MapVisualization({
   map,
   users,
+  presences = [],
 }: MapVisualizationProps) {
+  // Sensor detections are anonymous, so they are drawn without names
+  const detections = presences.flatMap((presence) =>
+    presence.movement_events.map((event, index) => ({
+      key: `${presence.zone_id}-${index}`,
+      ...event,
+    })),
+  );
+
   return (
     <div
       className="relative w-full overflow-hidden rounded border border-gray-300 bg-[#f4f7f5]"
@@ -83,6 +97,19 @@ export default function MapVisualization({
           </span>
         );
       })}
+
+      {detections.map((detection) => (
+        <span
+          key={detection.key}
+          className="absolute block size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-gray-800 shadow-md ring-1 ring-black/20 transition-[left,top] duration-300 ease-out motion-reduce:transition-none"
+          style={{
+            left: `${(detection.x / map.width) * 100}%`,
+            top: `${(detection.y / map.height) * 100}%`,
+          }}
+          role="img"
+          aria-label={`Detected person at ${detection.x}, ${detection.y}`}
+        />
+      ))}
 
       {users.map((user) => {
         const xPosition = (user.location.x / map.width) * 100;
