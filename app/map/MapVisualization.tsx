@@ -99,13 +99,6 @@ export default function MapVisualization({
       {movementMarkers.map((marker) => {
         const xPosition = (marker.x / map.width) * 100;
         const yPosition = (marker.y / map.height) * 100;
-        const labelHorizontalPosition = xPosition > 82 ? "right-4" : "left-4";
-        const labelVerticalPosition =
-          yPosition < 12
-            ? "top-4"
-            : yPosition > 88
-              ? "bottom-4"
-              : "top-1/2 -translate-y-1/2";
 
         return (
           <span
@@ -119,11 +112,6 @@ export default function MapVisualization({
               className="block size-4 rounded-full border-2 border-white shadow-md ring-1 ring-black/20"
               style={{ backgroundColor: "#2563eb" }}
             />
-            <span
-              className={`absolute ${labelHorizontalPosition} ${labelVerticalPosition} whitespace-nowrap rounded-sm border border-gray-200 bg-white/95 px-2 py-1 text-xs font-medium text-gray-900 shadow-sm`}
-            >
-              Anonymous presence
-            </span>
           </span>
         );
       })}
