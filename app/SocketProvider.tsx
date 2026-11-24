@@ -5,21 +5,32 @@ import {
   useContext,
   useEffect,
   useState,
+  type Dispatch,
   type ReactNode,
+  type SetStateAction,
 } from "react";
 import { io, type Socket } from "socket.io-client";
 import { BACKEND_URL } from "./backend-url";
+import type { CurrentUser } from "./backend-contracts";
+
+export type { CurrentUser } from "./backend-contracts";
 
 const SocketContext = createContext<Socket | null>(null);
+const UserContext = createContext<{
+  currentUser: CurrentUser | null;
+  setCurrentUser: Dispatch<SetStateAction<CurrentUser | null>>;
+} | null>(null);
 
 export function SocketProvider({ children }: { children: ReactNode }) {
   const [socket] = useState<Socket>(() =>
     io(BACKEND_URL, {
-      autoConnect: false,
+      autoConnect: true,
       reconnection: true,
       reconnectionAttempts: Infinity,
     }),
   );
+
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
   useEffect(() => {
     const onConnect = () => {
@@ -46,7 +57,11 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   }, [socket]);
 
   return (
-    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={socket}>
+      <UserContext.Provider value={{ currentUser, setCurrentUser }}>
+        {children}
+      </UserContext.Provider>
+    </SocketContext.Provider>
   );
 }
 
@@ -58,4 +73,14 @@ export function useSocket() {
   }
 
   return socket;
+}
+
+export function useCurrentUser() {
+  const context = useContext(UserContext);
+
+  if (!context) {
+    throw new Error("useCurrentUser must be used inside a SocketProvider");
+  }
+
+  return context;
 }

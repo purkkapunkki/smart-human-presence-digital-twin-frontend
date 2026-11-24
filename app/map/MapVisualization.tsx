@@ -1,8 +1,8 @@
-import type { AnonymousPresence, BackendMap } from "../backend-contracts";
+import type { BackendMap, CurrentUser } from "../backend-contracts";
 
 type MapVisualizationProps = {
   map: BackendMap;
-  presences: AnonymousPresence[];
+  users: CurrentUser[];
 };
 
 function getZoneCenter(polygon: [number, number][]) {
@@ -19,20 +19,8 @@ function getZoneCenter(polygon: [number, number][]) {
 
 export default function MapVisualization({
   map,
-  presences,
+  users,
 }: MapVisualizationProps) {
-  const movementMarkers = presences.flatMap((presence) =>
-    presence.movement_events
-      .map((movement, index) => ({
-        ...movement,
-        key: `${presence.zone_id}:${presence.timestamp}:${index}`,
-      }))
-      .filter(
-        (movement) =>
-          Number.isFinite(movement.x) && Number.isFinite(movement.y),
-      ),
-  );
-
   return (
     <div
       className="relative w-full overflow-hidden rounded border border-gray-300 bg-[#f4f7f5]"
@@ -96,9 +84,9 @@ export default function MapVisualization({
         );
       })}
 
-      {movementMarkers.map((marker) => {
-        const xPosition = (marker.x / map.width) * 100;
-        const yPosition = (marker.y / map.height) * 100;
+      {users.map((user) => {
+        const xPosition = (user.location.x / map.width) * 100;
+        const yPosition = (user.location.y / map.height) * 100;
         const labelHorizontalPosition = xPosition > 82 ? "right-4" : "left-4";
         const labelVerticalPosition =
           yPosition < 12
@@ -109,20 +97,20 @@ export default function MapVisualization({
 
         return (
           <span
-            key={marker.key}
+            key={user.username}
             className="absolute -translate-x-1/2 -translate-y-1/2 transition-[left,top] duration-300 ease-out motion-reduce:transition-none"
             style={{ left: `${xPosition}%`, top: `${yPosition}%` }}
             role="img"
-            aria-label={`Anonymous presence at ${marker.x}, ${marker.y}`}
+            aria-label={`${user.username} at ${user.location.x}, ${user.location.y}`}
           >
             <span
               className="block size-4 rounded-full border-2 border-white shadow-md ring-1 ring-black/20"
-              style={{ backgroundColor: "#2563eb" }}
+              style={{ backgroundColor: user.avatarColor }}
             />
             <span
               className={`absolute ${labelHorizontalPosition} ${labelVerticalPosition} whitespace-nowrap rounded-sm border border-gray-200 bg-white/95 px-2 py-1 text-xs font-medium text-gray-900 shadow-sm`}
             >
-              Anonymous presence
+              {user.username}
             </span>
           </span>
         );
