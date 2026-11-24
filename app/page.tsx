@@ -12,10 +12,14 @@ type LoginPayload = {
   avatarColor: string;
 };
 
+type TrackingConsent = "pending" | "accepted" | "declined";
+
 export default function Home() {
   const socket = useSocket();
   const router = useRouter();
   const { setCurrentUser } = useCurrentUser();
+  const [trackingConsent, setTrackingConsent] =
+    useState<TrackingConsent>("pending");
   const [username, setUsername] = useState("");
   const [avatarColor, setAvatarColor] = useState(DEFAULT_AVATAR_COLOR);
   const [errorMessage, setErrorMessage] = useState("");
@@ -24,6 +28,10 @@ export default function Home() {
   const loginTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
+    if (trackingConsent !== "accepted") {
+      return;
+    }
+
     const handleLoginSuccess = (payload: {
       username?: string;
       avatarColor?: string;
@@ -73,7 +81,7 @@ export default function Home() {
         window.clearTimeout(loginTimeoutRef.current);
       }
     };
-  }, [avatarColor, router, setCurrentUser, socket, username]);
+  }, [avatarColor, router, setCurrentUser, socket, trackingConsent, username]);
 
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -117,6 +125,63 @@ export default function Home() {
 
   if (isRedirectingToMap) {
     return null;
+  }
+
+  if (trackingConsent !== "accepted") {
+    return (
+      <main className="min-h-screen flex items-center justify-center p-4">
+        <section
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="tracking-consent-title"
+          aria-describedby="tracking-consent-description"
+          className="w-full max-w-md rounded-(--rounded-corners) border border-gray-200 bg-white p-6 text-center shadow-lg"
+        >
+          <h1
+            id="tracking-consent-title"
+            className="text-xl font-semibold text-gray-900"
+          >
+            Presence tracking
+          </h1>
+          {trackingConsent === "declined" ? (
+            <p
+              id="tracking-consent-description"
+              className="mt-3 text-gray-700"
+              role="status"
+            >
+              You declined presence tracking. You can close this page now.
+            </p>
+          ) : (
+            <>
+              <p
+                id="tracking-consent-description"
+                className="mt-3 text-gray-700"
+              >
+                Your presence will be tracked anonymously while this page is
+                open. You must accept to continue to login.
+              </p>
+              <div className="mt-5 flex justify-center gap-3">
+                <button
+                  type="button"
+                  autoFocus
+                  onClick={() => setTrackingConsent("accepted")}
+                  className="rounded-(--rounded-corners) bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+                >
+                  Accept
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTrackingConsent("declined")}
+                  className="rounded-(--rounded-corners) border border-gray-300 px-4 py-2 text-gray-900 transition-colors hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-700"
+                >
+                  Decline
+                </button>
+              </div>
+            </>
+          )}
+        </section>
+      </main>
+    );
   }
 
   return (

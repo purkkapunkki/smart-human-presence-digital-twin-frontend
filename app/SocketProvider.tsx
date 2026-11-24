@@ -24,7 +24,7 @@ const UserContext = createContext<{
 export function SocketProvider({ children }: { children: ReactNode }) {
   const [socket] = useState<Socket>(() =>
     io(BACKEND_URL, {
-      autoConnect: true,
+      autoConnect: false,
       reconnection: true,
       reconnectionAttempts: Infinity,
     }),
